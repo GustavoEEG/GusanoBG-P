@@ -1,0 +1,54 @@
+name: Assemble publication bridge
+
+on:
+  push:
+    branches:
+      - "publish/**"
+    paths:
+      - "incoming/methodology/**"
+      - "scripts/assemble_publication.py"
+      - ".github/workflows/assemble-publication.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Assemble methodology
+        run: python scripts/assemble_publication.py
+
+      - name: Validate publication policy
+        run: python scripts/validate_publication.py
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build site strictly
+        run: mkdocs build --strict
+
+      - name: Commit generated publication
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/metodologia.md docs/data/release.json
+          git rm -r --ignore-unmatch incoming/methodology
+          if git diff --cached --quiet; then
+            echo "No hay cambios generados."
+            exit 0
+          fi
+          git commit -m "publish: ensamblar metodología v2.1-preview.1"
+          git push
