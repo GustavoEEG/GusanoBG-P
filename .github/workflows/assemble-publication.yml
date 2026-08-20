@@ -5,9 +5,7 @@ on:
     branches:
       - "publish/**"
     paths:
-      - "incoming/methodology/**"
-      - "scripts/assemble_publication.py"
-      - ".github/workflows/assemble-publication.yml"
+      - "incoming/methodology/READY"
   workflow_dispatch:
 
 permissions:
@@ -22,6 +20,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Verify READY marker
+        run: test -f incoming/methodology/READY
 
       - name: Setup Python
         uses: actions/setup-python@v5
