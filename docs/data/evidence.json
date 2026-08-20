@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "generated_from": "PUBLIC_DEMO_ONLY",
+  "items": {
+    "CIT-DEMO-001": {
+      "reference": "Phillips et al. (2006)",
+      "supports": "Sustenta el marco de modelación de distribución a partir de registros de presencia y condiciones ambientales mediante máxima entropía.",
+      "application": "En la metodología GBG se usa como parte del fundamento para mantener separada la idoneidad relativa de una probabilidad epidemiológica calibrada.",
+      "does_not_support": "No demuestra que una salida de MaxEnt sea por sí misma probabilidad de infestación, ni transfiere parámetros, umbrales o configuraciones publicados a Campeche.",
+      "review_id": "DEMO",
+      "evidence_ids": [],
+      "source_location": "Ficha demostrativa; será sustituida por trazabilidad exportada desde el repositorio privado.",
+      "public_note": "Ejemplo técnico de la interfaz; no constituye todavía la ficha pública definitiva de esta cita."
+    }
+  }
+}

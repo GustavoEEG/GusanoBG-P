@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "forbidden_substrings": [
+    "Bibliografia Postdoc",
+    "bibliografia/revisiones/",
+    "matriz_evidencia.csv",
+    "registro_decisiones.csv",
+    "drive_file_id=",
+    "/mnt/data/",
+    "github_pat_",
+    "ghp_"
+  ],
+  "required_files": [
+    "mkdocs.yml",
+    "docs/index.md",
+    "docs/metodologia.md",
+    "docs/evidencia.md",
+    "docs/data/evidence.json"
+  ],
+  "evidence_required_fields": [
+    "reference",
+    "supports",
+    "application",
+    "does_not_support",
+    "review_id",
+    "source_location"
+  ]
+}
