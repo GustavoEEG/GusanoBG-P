@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "release_label": "v2.1-preview.1",
+  "methodology_version": "2.1-draft",
+  "methodology_source_date": "2 de agosto de 2026",
+  "source_sha_private": "eff6e313b4c846fdbe62fa93a2560905573f0744",
+  "source_blob_sha_private": "83cee87e5b63319357d6e58d48d979ee3f273a16",
+  "source_sha256": null,
+  "public_sanitized_source_sha256": "24ea215c195aa176a93ebe632533613c03c2bed9aa967e51e1ec703692393a3b",
+  "generated_at_utc": "2026-08-20T20:30:18+00:00",
+  "private_links_sanitized": 6,
+  "canonical_source": "metodologia/00_metodologia_principal.md",
+  "public_repository": "GustavoEEG/GusanoBG-P",
+  "editing_policy": "GENERATED_DO_NOT_EDIT_DIRECTLY",
+  "transfer_mode": "SANITIZED_FRAGMENT_BRIDGE"
+}
