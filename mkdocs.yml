@@ -35,10 +35,11 @@ markdown_extensions:
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
-  - javascripts/evidence-tooltips.js
+  - javascripts/evidence-popover-v3.js
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/evidence-v3.css
 
 plugins:
   - search
