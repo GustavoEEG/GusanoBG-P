@@ -1,31 +1,43 @@
 # Trazabilidad interactiva de evidencia
 
-La versión web no usa una cita como simple decoración bibliográfica. Cada **instancia de cita** puede vincularse con una ficha específica que explica por qué esa fuente aparece exactamente en ese segmento metodológico.
+La ventana de una cita no es una ficha bibliográfica. Su función es responder una pregunta concreta: **¿qué prueba contenida en esta fuente justifica que se cite precisamente en este punto de la metodología?**
 
-## Estado de cobertura
+## Regla de publicación
 
-La trazabilidad real está activada inicialmente para las **secciones 0–3** de la metodología. Este primer lote contiene 15 instancias curadas. La cobertura se ampliará por lotes hasta alcanzar todas las citas metodológicas que requieran una justificación auditable.
+Una cita sólo se vuelve interactiva cuando existe una **prueba documental verificada**. No basta con haber revisado el artículo, asignarle un ART o escribir una síntesis general de su relevancia.
 
-Una misma publicación puede aparecer más de una vez con fichas distintas cuando sustenta principios diferentes. Por ejemplo, una fuente puede respaldar en una sección la taxonomía de productos y en otra la definición de escala, soporte o dominio.
+Cada cita interactiva debe mostrar:
 
-## Estructura de cada ficha
+1. **el texto metodológico** en el que aparece;
+2. **qué parte exacta de ese texto respalda esa fuente**;
+3. **la prueba localizada en la fuente**, indicando página y sección, tabla, figura o suplemento cuando corresponda;
+4. **por qué esa prueba sustenta la afirmación metodológica**;
+5. **qué parte del texto no puede atribuirse a esa fuente** o qué transferencia no está permitida.
 
-**Sustenta.** Qué principio o afirmación metodológica respalda la fuente en ese punto.
+Cuando varias publicaciones aparecen en una misma oración, cada una debe justificar únicamente el fragmento que realmente sostiene. La presencia de una cita dentro de un grupo no autoriza a atribuirle toda la oración.
 
-**Aplicación en GBG.** Cómo se utiliza ese respaldo dentro del diseño de Escárcega y Champotón.
+## Tipos de prueba
 
-**No sustenta.** Qué extrapolaciones, cifras, umbrales, distancias, configuraciones o interpretaciones no se transfieren automáticamente.
+**Cita textual breve.** Fragmento literal previamente verificado en el documento fuente. Se mantiene deliberadamente corto.
 
-**Trazabilidad.** Identificador estable de la instancia, sección metodológica, revisión/expediente y, cuando sea publicable, unidades de evidencia y localización resumida de la fuente.
+**Paráfrasis verificada.** Síntesis fiel de un pasaje cuya ubicación exacta se ha comprobado. Se identifica explícitamente como paráfrasis para no presentarla como palabras de los autores.
+
+**Tabla, figura o suplemento.** Se identifica el objeto concreto y su ubicación; la explicación indica qué información de ese objeto sustenta el texto metodológico.
 
 ## Interacción
 
-En computadora, coloque el cursor sobre una cita marcada para ver la explicación breve. La misma información aparece al navegar con teclado. En dispositivos táctiles, toque la cita. Al activar **Ver evidencia**, se abre una ficha ampliada con la trazabilidad disponible.
+En computadora, al colocar el cursor sobre una cita verificada aparece una ventana breve con **qué parte respalda**, una primera **prueba en la fuente**, su ubicación y la razón de la cita. Con clic —o toque en dispositivos táctiles— se abre la prueba completa con todos los pasajes verificados y el límite de interpretación.
 
-Las citas se enlazan mediante un identificador `CIT-Mxx-Sxx-nnn`. Durante esta transición, la interfaz puede reconocer tanto citas ya anotadas durante la exportación como citas autor–año todavía presentes como texto normal, siempre que su ficha pública defina de forma inequívoca la sección y el texto que debe enlazarse.
+Los identificadores `CIT-*`, `ART-*` y `UE_*` se mantienen para auditoría, pero quedan en un apartado secundario de **Trazabilidad técnica**. No sustituyen la justificación científica.
+
+## Estado actual
+
+La nueva estructura se está validando primero con **Forero Becerra, Cortés y Villamil (2007)** en la sección 2. Las fichas genéricas anteriores se desactivaron deliberadamente: es preferible una cita correctamente demostrada que muchas ventanas que sólo describan la bibliografía.
+
+Una vez validado este formato, las demás citas se habilitarán progresivamente sólo después de reconstruir su prueba desde las fuentes revisadas.
 
 !!! warning "Regla de transferencia"
-    Que un artículo sustente un principio metodológico **no significa** que sus parámetros publicados se conviertan en valores locales del proyecto. Los parámetros deben conservar su procedencia y pasar por la auditoría, piloto o validación que corresponda.
+    Que una fuente sustente un principio no convierte automáticamente sus cifras, umbrales, distancias, configuraciones o desempeño en parámetros locales. La propia ventana debe indicar ese límite cuando sea pertinente.
 
 !!! info "Fuente de verdad"
-    Las fichas públicas son una capa de explicación y auditoría. No sustituyen los expedientes científicos, matrices de evidencia ni decisiones mantenidos en el repositorio privado, y tampoco convierten al repositorio público en una segunda metodología canónica.
+    La prueba pública es una derivación verificable de la revisión científica privada. La metodología canónica continúa siendo la fuente de verdad; la interfaz pública explica por qué sus citas son defendibles.
