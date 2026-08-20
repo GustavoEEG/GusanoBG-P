@@ -8,6 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = ROOT / "publication_policy.json"
+SELF_PATH = Path(__file__).resolve()
 
 TEXT_SUFFIXES = {".md", ".yml", ".yaml", ".json", ".js", ".css", ".txt", ".py"}
 TOKEN_PATTERNS = [
@@ -29,10 +30,11 @@ def main() -> int:
             fail(f"Falta archivo requerido: {rel}", errors)
 
     ignored_parts = {".git", "site", ".venv", "venv", "__pycache__"}
+    ignored_files = {POLICY_PATH.resolve(), SELF_PATH}
     for path in ROOT.rglob("*"):
         if not path.is_file() or path.suffix.lower() not in TEXT_SUFFIXES:
             continue
-        if ignored_parts.intersection(path.parts):
+        if path.resolve() in ignored_files or ignored_parts.intersection(path.parts):
             continue
         rel = path.relative_to(ROOT)
         text = path.read_text(encoding="utf-8", errors="replace")
