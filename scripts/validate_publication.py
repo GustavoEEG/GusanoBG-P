@@ -15,10 +15,22 @@ TOKEN_PATTERNS = [
     re.compile(r"github_pat_[A-Za-z0-9_]+"),
     re.compile(r"ghp_[A-Za-z0-9]+"),
 ]
+SECTION_RE = re.compile(r"^##\s+(\d+)\.\s+", re.MULTILINE)
+CITATION_ID_RE = re.compile(r"CIT-M\d{2}-S\d{2}-\d{3}")
 
 
 def fail(message: str, errors: list[str]) -> None:
     errors.append(message)
+
+
+def section_text(methodology: str, section_number: str) -> str | None:
+    matches = list(SECTION_RE.finditer(methodology))
+    for index, match in enumerate(matches):
+        if match.group(1) != section_number:
+            continue
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(methodology)
+        return methodology[match.start():end]
+    return None
 
 
 def main() -> int:
@@ -46,6 +58,7 @@ def main() -> int:
                 fail(f"Posible credencial en {rel}: patrón {pattern.pattern}", errors)
 
     evidence_path = ROOT / "docs/data/evidence.json"
+    methodology_path = ROOT / "docs/metodologia.md"
     if evidence_path.exists():
         try:
             evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
@@ -58,26 +71,51 @@ def main() -> int:
             fail("evidence.json: 'items' debe ser un objeto", errors)
             items = {}
 
+        if evidence.get("generated_from") == "PUBLIC_DEMO_ONLY":
+            fail("evidence.json sigue marcado como demostración técnica", errors)
+
+        methodology = methodology_path.read_text(encoding="utf-8") if methodology_path.exists() else ""
         required = policy.get("evidence_required_fields", [])
+
         for citation_id, item in items.items():
-            if not re.fullmatch(r"CIT-[A-Z0-9-]+", citation_id):
+            if not CITATION_ID_RE.fullmatch(citation_id):
                 fail(f"ID de cita no válido: {citation_id}", errors)
             if not isinstance(item, dict):
                 fail(f"Ficha {citation_id} no es un objeto", errors)
                 continue
+
             for field in required:
                 value = item.get(field)
                 if value is None or (isinstance(value, str) and not value.strip()):
                     fail(f"Ficha {citation_id}: falta campo '{field}'", errors)
 
-        methodology = (ROOT / "docs/metodologia.md").read_text(encoding="utf-8") if (ROOT / "docs/metodologia.md").exists() else ""
+            section = str(item.get("section", "")).strip()
+            match = str(item.get("match", "")).strip()
+            if not section.isdigit() or not match:
+                continue
+
+            explicit_count = len(re.findall(rf'data-evidence="{re.escape(citation_id)}"', methodology))
+            if explicit_count > 1:
+                fail(f"{citation_id}: aparece más de una vez como anotación explícita", errors)
+                continue
+            if explicit_count == 1:
+                continue
+
+            fragment = section_text(methodology, section)
+            if fragment is None:
+                fail(f"{citation_id}: no existe la sección {section} en metodologia.md", errors)
+                continue
+            raw_count = fragment.count(match)
+            if raw_count != 1:
+                fail(
+                    f"{citation_id}: se esperaba 1 coincidencia de '{match}' en sección {section} y se encontraron {raw_count}",
+                    errors,
+                )
+
         used_ids = set(re.findall(r'data-evidence="([A-Z0-9-]+)"', methodology))
         missing = sorted(used_ids.difference(items))
-        orphan = sorted(set(items).difference(used_ids))
         for citation_id in missing:
             fail(f"La metodología usa {citation_id} pero no existe su ficha pública", errors)
-        if orphan:
-            print("Aviso: fichas no usadas en metodologia.md:", ", ".join(orphan))
 
     if errors:
         print("PUBLICACIÓN BLOQUEADA")
