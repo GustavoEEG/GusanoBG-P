@@ -26,5 +26,8 @@ jobs:
       - name: Validate publication policy
         run: python scripts/validate_publication.py
 
+      - name: Validate evidence frontend syntax
+        run: node --check docs/javascripts/evidence-popover-v3.js
+
       - name: Build site strictly
         run: mkdocs build --strict

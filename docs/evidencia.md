@@ -26,7 +26,9 @@ Cuando varias publicaciones aparecen en una misma oración, cada una debe justif
 
 ## Interacción
 
-En computadora, al colocar el cursor sobre una cita verificada aparece una ventana breve con **qué parte respalda**, una primera **prueba en la fuente**, su ubicación y la razón de la cita. Con clic —o toque en dispositivos táctiles— se abre la prueba completa con todos los pasajes verificados y el límite de interpretación.
+En computadora, al colocar el cursor sobre una cita verificada aparece una ventana breve con **qué parte respalda**, una primera **prueba en la fuente**, su ubicación y la razón de la cita. Con clic —o toque en dispositivos táctiles— se abre una **ventana modal sobre el mismo punto de lectura** con todas las pruebas verificadas y sus límites.
+
+La página **no salta al final ni cambia la posición de lectura**. Al cerrar la ventana, el foco vuelve a la cita desde la que se abrió para continuar exactamente donde se estaba leyendo. La prueba extensa tiene su propio desplazamiento interno si fuera necesario.
 
 Los identificadores `CIT-*`, `ART-*` y `UE_*` se mantienen para auditoría, pero quedan en un apartado secundario de **Trazabilidad técnica**. No sustituyen la justificación científica.
 
