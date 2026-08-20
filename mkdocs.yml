@@ -1,0 +1,46 @@
+site_name: Metodología GBG
+site_description: Metodología pública e interactiva para vigilancia, análisis espacial, percepción remota y modelación del gusano barrenador del ganado.
+site_url: https://gustavoeeg.github.io/GusanoBG-P/
+repo_url: https://github.com/GustavoEEG/GusanoBG-P
+repo_name: GustavoEEG/GusanoBG-P
+
+theme:
+  name: material
+  language: es
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.tooltips
+    - content.code.copy
+    - search.highlight
+    - search.suggest
+
+nav:
+  - Inicio: index.md
+  - Metodología: metodologia.md
+  - Cómo leer la evidencia: evidencia.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+  - javascripts/evidence-tooltips.js
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+
+copyright: "Publicación metodológica derivada y versionada. La fuente científica canónica se mantiene en el repositorio privado de trabajo."
