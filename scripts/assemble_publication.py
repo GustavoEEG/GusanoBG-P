@@ -26,8 +26,21 @@ def main() -> int:
         return 0
 
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    expected_parts = int(manifest.get("expected_parts", len(parts)))
+    if len(parts) != expected_parts:
+        print(
+            f"EXPORTACIÓN BLOQUEADA: se esperaban {expected_parts} fragmentos y existen {len(parts)}.",
+            file=sys.stderr,
+        )
+        return 1
+
     policy = json.loads(POLICY.read_text(encoding="utf-8"))
-    source = "".join(path.read_text(encoding="utf-8") for path in parts)
+    # fetch_file por rangos no conserva el separador entre el último renglón de
+    # un fragmento y el primero del siguiente. Insertamos exactamente un salto
+    # entre fragmentos y preservamos cualquier línea vacía inicial del siguiente.
+    source = "\n".join(
+        path.read_text(encoding="utf-8").rstrip("\n") for path in parts
+    ) + "\n"
 
     for forbidden in policy.get("forbidden_substrings", []):
         if forbidden in source:
