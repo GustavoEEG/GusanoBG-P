@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "2.0",
   "forbidden_substrings": [
     "Bibliografia Postdoc",
     "bibliografia/revisiones/",
@@ -17,14 +17,26 @@
     "docs/evidencia.md",
     "docs/data/evidence.json"
   ],
+  "evidence_schema_version": "2.0",
+  "evidence_publication_status": "VERIFIED_SOURCE_PROOF",
   "evidence_required_fields": [
+    "publication_status",
     "section",
     "match",
     "reference",
-    "supports",
-    "application",
-    "does_not_support",
-    "review_id",
-    "source_location"
-  ]
+    "methodology_text",
+    "supported_fragment",
+    "evidence",
+    "why_cited_here",
+    "boundary",
+    "review_id"
+  ],
+  "evidence_allowed_types": [
+    "TEXT_QUOTE",
+    "VERIFIED_PARAPHRASE",
+    "TABLE",
+    "FIGURE",
+    "SUPPLEMENT"
+  ],
+  "max_quote_words": 25
 }

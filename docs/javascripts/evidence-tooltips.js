@@ -7,9 +7,9 @@
   function loadEvidence() {
     if (!evidencePromise) {
       evidencePromise = fetch(dataUrl, { cache: "no-store" })
-        .then((r) => {
-          if (!r.ok) throw new Error(`HTTP ${r.status}`);
-          return r.json();
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
         })
         .then((json) => json.items || {});
     }
@@ -19,7 +19,6 @@
   function ensureTooltip() {
     let tooltip = document.getElementById("evidence-tooltip");
     if (tooltip) return tooltip;
-
     tooltip = document.createElement("div");
     tooltip.id = "evidence-tooltip";
     tooltip.className = "evidence-tooltip";
@@ -29,10 +28,10 @@
     return tooltip;
   }
 
-  function appendField(parent, label, value) {
+  function appendField(parent, label, value, className = "evidence-field") {
     if (!value) return;
     const section = document.createElement("div");
-    section.className = "evidence-field";
+    section.className = className;
     const heading = document.createElement("strong");
     heading.textContent = label;
     const text = document.createElement("p");
@@ -41,20 +40,74 @@
     parent.appendChild(section);
   }
 
+  function evidenceTypeLabel(type) {
+    const labels = {
+      TEXT_QUOTE: "Cita textual breve",
+      VERIFIED_PARAPHRASE: "Paráfrasis verificada",
+      TABLE: "Tabla",
+      FIGURE: "Figura",
+      SUPPLEMENT: "Material suplementario"
+    };
+    return labels[type] || type;
+  }
+
+  function appendProof(parent, proof, compact = false) {
+    const block = document.createElement("section");
+    block.className = compact ? "evidence-proof evidence-proof--compact" : "evidence-proof";
+
+    const meta = document.createElement("div");
+    meta.className = "evidence-proof__meta";
+    const type = document.createElement("span");
+    type.className = "evidence-proof__type";
+    type.textContent = evidenceTypeLabel(proof.evidence_type);
+    const location = document.createElement("span");
+    location.className = "evidence-proof__location";
+    location.textContent = proof.location;
+    meta.append(type, location);
+    block.appendChild(meta);
+
+    const text = document.createElement(proof.evidence_type === "TEXT_QUOTE" ? "blockquote" : "p");
+    text.className = "evidence-proof__text";
+    text.textContent = proof.text;
+    block.appendChild(text);
+
+    if (!compact && proof.link_to_claim) {
+      const why = document.createElement("p");
+      why.className = "evidence-proof__why";
+      const strong = document.createElement("strong");
+      strong.textContent = "Por qué esta prueba respalda el texto: ";
+      why.append(strong, document.createTextNode(proof.link_to_claim));
+      block.appendChild(why);
+    }
+    parent.appendChild(block);
+  }
+
   function renderTooltipContent(tooltip, id, item) {
     tooltip.replaceChildren();
+
     const title = document.createElement("div");
     title.className = "evidence-tooltip__title";
     title.textContent = item.reference || id;
     tooltip.appendChild(title);
-    appendField(tooltip, "Sustenta", item.supports);
-    appendField(tooltip, "Aplicación", item.application);
-    appendField(tooltip, "No sustenta", item.does_not_support);
+
+    appendField(tooltip, "Qué parte del texto respalda", item.supported_fragment);
+
+    const firstProof = Array.isArray(item.evidence) ? item.evidence[0] : null;
+    if (firstProof) {
+      const proofTitle = document.createElement("strong");
+      proofTitle.className = "evidence-tooltip__proof-title";
+      proofTitle.textContent = "Prueba en la fuente";
+      tooltip.appendChild(proofTitle);
+      appendProof(tooltip, firstProof, true);
+    }
+
+    appendField(tooltip, "Por qué se cita aquí", item.why_cited_here);
+    appendField(tooltip, "Límite de esta fuente", item.boundary, "evidence-field evidence-field--boundary");
 
     const button = document.createElement("button");
     button.type = "button";
     button.className = "evidence-more";
-    button.textContent = "Ver evidencia";
+    button.textContent = "Ver prueba completa";
     button.addEventListener("click", (event) => {
       event.stopPropagation();
       showDetail(id, item);
@@ -104,18 +157,42 @@
     const close = document.createElement("button");
     close.type = "button";
     close.className = "evidence-close";
-    close.setAttribute("aria-label", "Cerrar ficha de evidencia");
+    close.setAttribute("aria-label", "Cerrar prueba de evidencia");
     close.textContent = "×";
-    close.addEventListener("click", () => {
-      detail.hidden = true;
-    });
+    close.addEventListener("click", () => { detail.hidden = true; });
     header.append(title, close);
     detail.appendChild(header);
 
-    appendField(detail, "Sustenta", item.supports);
-    appendField(detail, "Aplicación en GBG", item.application);
-    appendField(detail, "No sustenta / límite de transferencia", item.does_not_support);
-    appendField(detail, "Localización de la evidencia", item.source_location);
+    appendField(detail, "Texto metodológico donde aparece", item.methodology_text, "evidence-methodology-claim");
+    appendField(detail, "Parte respaldada por esta fuente", item.supported_fragment);
+
+    const proofHeading = document.createElement("h4");
+    proofHeading.className = "evidence-detail__proof-heading";
+    proofHeading.textContent = "Prueba documental en la fuente";
+    detail.appendChild(proofHeading);
+
+    if (Array.isArray(item.evidence)) {
+      item.evidence.forEach((proof) => appendProof(detail, proof, false));
+    }
+
+    appendField(detail, "Por qué esta evidencia justifica la cita", item.why_cited_here);
+    appendField(detail, "Lo que esta fuente NO justifica aquí", item.boundary, "evidence-field evidence-boundary");
+
+    if (item.source_url) {
+      const sourceLink = document.createElement("a");
+      sourceLink.className = "evidence-source-link";
+      sourceLink.href = item.source_url;
+      sourceLink.target = "_blank";
+      sourceLink.rel = "noopener noreferrer";
+      sourceLink.textContent = "Abrir fuente original ↗";
+      detail.appendChild(sourceLink);
+    }
+
+    const technical = document.createElement("details");
+    technical.className = "evidence-technical";
+    const summary = document.createElement("summary");
+    summary.textContent = "Trazabilidad técnica";
+    technical.appendChild(summary);
 
     const trace = document.createElement("dl");
     trace.className = "evidence-trace";
@@ -123,7 +200,7 @@
       ["Instancia", id],
       ["Sección", item.section],
       ["Revisión", item.review_id],
-      ["Unidades de evidencia", Array.isArray(item.evidence_ids) && item.evidence_ids.length ? item.evidence_ids.join(", ") : "No publicadas en esta ficha"]
+      ["Unidades de evidencia", Array.isArray(item.evidence_ids) && item.evidence_ids.length ? item.evidence_ids.join(", ") : "—"]
     ];
     for (const [term, value] of pairs) {
       const dt = document.createElement("dt");
@@ -132,9 +209,13 @@
       dd.textContent = value || "—";
       trace.append(dt, dd);
     }
-    detail.appendChild(trace);
-    appendField(detail, "Nota pública", item.public_note);
-    detail.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
+    technical.appendChild(trace);
+    detail.appendChild(technical);
+
+    detail.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "nearest"
+    });
   }
 
   function findSectionHeading(sectionNumber) {
@@ -150,8 +231,7 @@
       acceptNode(node) {
         if (!node.nodeValue || !node.nodeValue.includes(matchText)) return NodeFilter.FILTER_REJECT;
         const parent = node.parentElement;
-        if (!parent) return NodeFilter.FILTER_REJECT;
-        if (parent.closest(".evidence-citation, code, pre, script, style")) return NodeFilter.FILTER_REJECT;
+        if (!parent || parent.closest(".evidence-citation, code, pre, script, style")) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });
@@ -186,7 +266,7 @@
     span.dataset.evidence = id;
     span.tabIndex = 0;
     span.setAttribute("role", "button");
-    span.setAttribute("aria-label", `${matchText}. Ver sustento de evidencia`);
+    span.setAttribute("aria-label", `${matchText}. Ver prueba documental`);
     span.textContent = matchText;
     matchedNode.parentNode.replaceChild(span, matchedNode);
   }
@@ -199,12 +279,11 @@
 
   function annotateRawCitations(items) {
     for (const [id, item] of Object.entries(items)) {
-      if (hasEvidenceElement(id)) continue;
-      if (!item || !item.section || !item.match) continue;
+      if (!item || item.publication_status !== "VERIFIED_SOURCE_PROOF") continue;
+      if (hasEvidenceElement(id) || !item.section || !item.match) continue;
 
       const heading = findSectionHeading(String(item.section));
-      if (!heading) continue; // Otra página del sitio: no es un error de interfaz.
-
+      if (!heading) continue;
       const hits = sectionTextMatches(heading, item.match);
       if (hits.length !== 1) {
         console.warn(`Evidencia ${id}: se esperaba una coincidencia en sección ${item.section} y se encontraron ${hits.length}.`);
@@ -228,11 +307,11 @@
 
       const id = citation.dataset.evidence;
       let itemCache;
-
       const prepare = async () => {
         if (itemCache) return itemCache;
         const items = await loadEvidence();
-        itemCache = items[id];
+        const candidate = items[id];
+        itemCache = candidate && candidate.publication_status === "VERIFIED_SOURCE_PROOF" ? candidate : null;
         return itemCache;
       };
 
@@ -243,7 +322,7 @@
           renderTooltipContent(tooltip, id, item);
           positionTooltip(tooltip, citation);
         } catch (error) {
-          console.warn("No se pudo cargar la evidencia pública:", error);
+          console.warn("No se pudo cargar la prueba documental:", error);
         }
       };
 
@@ -268,7 +347,7 @@
           showDetail(id, item);
           tooltip.hidden = true;
         } catch (error) {
-          console.warn("No se pudo abrir la ficha de evidencia:", error);
+          console.warn("No se pudo abrir la prueba documental:", error);
         }
       });
       citation.addEventListener("keydown", (event) => {
@@ -296,7 +375,7 @@
       annotateRawCitations(items);
       bindCitations();
     } catch (error) {
-      console.warn("No se pudo inicializar la trazabilidad de evidencia:", error);
+      console.warn("No se pudo inicializar la prueba documental de citas:", error);
     }
   }
 
