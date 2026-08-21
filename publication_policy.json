@@ -1,5 +1,9 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "3.0",
+  "canonical_source": "metodologia/00_metodologia_principal_corregida.md",
+  "references_heading": "# Referencias citadas",
+  "require_full_citation_coverage": true,
+  "require_explicit_evidence_spans": true,
   "forbidden_substrings": [
     "Bibliografia Postdoc",
     "bibliografia/revisiones/",
@@ -17,7 +21,7 @@
     "docs/evidencia.md",
     "docs/data/evidence.json"
   ],
-  "evidence_schema_version": "2.0",
+  "evidence_schema_version": "3.0",
   "evidence_publication_status": "VERIFIED_SOURCE_PROOF",
   "evidence_required_fields": [
     "publication_status",
